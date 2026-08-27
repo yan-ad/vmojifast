@@ -13,118 +13,77 @@ import {
 
 const skinTone = ref<SkinTone>("none");
 const search = ref("");
-const message = ref("A fast Vue emoji picker, without the visual baggage.");
-const recentEmojis = ref<Emoji[]>([]);
 const selectedEmoji = ref<Emoji | null>(null);
-
-const status = computed(() => selectedEmoji.value?.label ?? "Hover an emoji to inspect it");
-
-function selectEmoji(emoji: Emoji) {
-  message.value += emoji.emoji;
-  selectedEmoji.value = emoji;
-  recentEmojis.value = [
-    emoji,
-    ...recentEmojis.value.filter(({ emoji: value }) => value !== emoji.emoji),
-  ].slice(0, 8);
-}
+const pickedLabel = computed(() => selectedEmoji.value?.label ?? "Hover an emoji");
 </script>
 
 <template>
-  <main class="page-shell">
-    <header class="masthead">
+  <main class="demo-page">
+    <header class="site-nav">
       <a
         class="wordmark"
-        href="https://www.npmjs.com/package/vmojifast"
+        href="https://github.com/yan-ad/vmojifast"
         target="_blank"
         rel="noreferrer"
       >
-        vmoji<span>fast</span>
+        <span class="mark">v</span>mojifast
       </a>
-      <p>Vue 3 emoji picker · composable by default</p>
       <a
-        class="repo-link"
-        href="https://github.com/liveblocks/frimousse"
+        class="github-link"
+        href="https://github.com/yan-ad/vmojifast"
         target="_blank"
         rel="noreferrer"
       >
-        Inspired by Frimousse ↗
+        GitHub <span aria-hidden="true">↗</span>
       </a>
     </header>
 
-    <section class="hero" aria-labelledby="demo-heading">
-      <div class="hero-copy">
-        <p class="eyebrow">Live proof of concept</p>
-        <h1 id="demo-heading">Emoji selection,<br /><em>minus the ceremony.</em></h1>
-        <p class="lede">
-          A fully unstyled primitive, dressed here with a warm editorial skin. Search, tone
-          selection, active state, and recents are all live.
-        </p>
-        <div class="feature-strip" aria-label="Demo features">
-          <span>01 · Searchable</span><span>02 · Tone-aware</span><span>03 · Recent history</span>
-        </div>
+    <section class="demo-stage" aria-label="vmojifast emoji picker demo">
+      <div class="intro">
+        <p>EMOJI PICKER FOR VUE 3</p>
+        <h1>Pick an <em>emoji.</em></h1>
       </div>
 
-      <div class="composer-card">
-        <div class="composer-topline">
-          <span>MESSAGE COMPOSER</span><span class="live-dot">LIVE</span>
-        </div>
-        <label class="message-field">
-          <span class="sr-only">Message</span>
-          <textarea v-model="message" rows="4" />
-        </label>
-        <div class="composer-footer">
-          <span>{{ message.length }} characters</span>
-          <button type="button" @click="message = ''">Clear</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="picker-section" aria-label="Emoji picker example">
-      <EmojiPickerRoot
-        v-model:search="search"
-        v-model:skin-tone="skinTone"
-        :recent-emojis="recentEmojis"
-        :columns="8"
-        recent-label="Recently used"
-        @emoji-select="selectEmoji"
-      >
-        <div class="picker-card">
-          <div class="picker-toolbar">
-            <EmojiPickerSearch class="emoji-search" placeholder="Find an emoji…" />
-            <EmojiPickerSkinToneSelector class="tone-selector" />
-          </div>
-
-          <EmojiPickerViewport class="emoji-viewport">
-            <EmojiPickerList>
-              <template #category="{ category }">
-                <div class="category-title">{{ category.label }}</div>
-              </template>
-              <template #loading><div class="picker-notice">Collecting tiny faces…</div></template>
-              <template #empty
-                ><div class="picker-notice">No tiny face found for “{{ search }}”.</div></template
-              >
-            </EmojiPickerList>
-          </EmojiPickerViewport>
-
-          <footer class="picker-footer">
-            <div class="active-readout">
-              <span class="active-glyph"
-                ><EmojiPickerActiveEmoji v-slot="{ emoji }">{{
-                  emoji?.emoji ?? "✦"
-                }}</EmojiPickerActiveEmoji></span
-              >
-              <span>{{ status }}</span>
+      <div class="picker-frame">
+        <EmojiPickerRoot
+          v-model:search="search"
+          v-model:skin-tone="skinTone"
+          :columns="8"
+          @emoji-select="selectedEmoji = $event"
+        >
+          <section class="picker-card" aria-label="Emoji picker">
+            <div class="picker-toolbar">
+              <EmojiPickerSearch
+                class="emoji-search"
+                placeholder="Search..."
+                aria-label="Search emojis"
+              />
             </div>
-            <span class="keyboard-hint">CLICK TO ADD</span>
-          </footer>
-        </div>
-      </EmojiPickerRoot>
-    </section>
 
-    <footer class="site-footer">
-      <span>DATA: EMOJIBASE</span>
-      <span>VUE 3 · TYPESCRIPT</span>
-      <span>MIT LICENSE</span>
-    </footer>
+            <EmojiPickerViewport class="emoji-viewport">
+              <EmojiPickerList>
+                <template #category="{ category }"
+                  ><h2 class="category-title">{{ category.label }}</h2></template
+                >
+                <template #loading><div class="picker-notice">Loading emoji...</div></template>
+                <template #empty><div class="picker-notice">No emoji found.</div></template>
+              </EmojiPickerList>
+            </EmojiPickerViewport>
+
+            <footer class="picker-footer">
+              <EmojiPickerActiveEmoji v-slot="{ emoji }">
+                <div class="active-readout" aria-live="polite">
+                  <span class="active-glyph">{{
+                    emoji?.emoji ?? selectedEmoji?.emoji ?? "✦"
+                  }}</span>
+                  <span>{{ emoji?.label ?? pickedLabel }}</span>
+                </div>
+              </EmojiPickerActiveEmoji>
+              <EmojiPickerSkinToneSelector class="tone-selector" aria-label="Choose skin tone" />
+            </footer>
+          </section>
+        </EmojiPickerRoot>
+      </div>
+    </section>
   </main>
 </template>

@@ -30,6 +30,7 @@ export interface EmojiPickerContext {
   data: Ref<EmojiData | undefined>;
   pickerData: ComputedRef<EmojiPickerData | undefined>;
   activeEmoji: Ref<Emoji | undefined>;
+  selectedEmoji: Ref<Emoji | undefined>;
   select: (emoji: Emoji) => void;
   setSearch: (search: string) => void;
 }
@@ -57,6 +58,7 @@ export function createEmojiPicker(options: {
   const data = ref<EmojiData>();
   const englishData = ref<EmojiData>();
   const activeEmoji = ref<Emoji>();
+  const selectedEmoji = ref<Emoji>();
   watch(options.searchValue, (value) => {
     if (value !== undefined) search.value = value;
   });
@@ -120,7 +122,11 @@ export function createEmojiPicker(options: {
     data,
     pickerData,
     activeEmoji,
-    select: options.onEmojiSelect,
+    selectedEmoji,
+    select: (emoji) => {
+      selectedEmoji.value = emoji;
+      options.onEmojiSelect(emoji);
+    },
     setSearch,
   };
   provide(emojiPickerKey, context);

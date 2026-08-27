@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useEmojiPicker } from "../context";
 const picker = useEmojiPicker();
 const viewport = ref<HTMLElement>();
@@ -9,9 +9,17 @@ const activeIndex = computed(
       .flatMap((row) => row.emojis)
       .findIndex((emoji) => emoji.emoji === picker.activeEmoji.value?.emoji) ?? -1,
 );
-function setActive(index: number) {
+async function setActive(index: number) {
   const emoji = picker.pickerData.value?.rows.flatMap((row) => row.emojis)[index];
-  if (emoji) picker.activeEmoji.value = emoji;
+  if (!emoji) return;
+
+  picker.activeEmoji.value = emoji;
+  await nextTick();
+  const button = [
+    ...(viewport.value?.querySelectorAll<HTMLButtonElement>("button[data-vmojifast-emoji]") ?? []),
+  ][index];
+  button?.focus();
+  button?.scrollIntoView({ block: "nearest", inline: "nearest" });
 }
 function keydown(event: KeyboardEvent) {
   const data = picker.pickerData.value;
@@ -31,5 +39,14 @@ function keydown(event: KeyboardEvent) {
 }
 </script>
 <template>
-  <div ref="viewport" vmojifast-viewport role="grid" tabindex="0" @keydown="keydown"><slot /></div>
+  <div
+    ref="viewport"
+    vmojifast-viewport
+    data-vmojifast-viewport
+    role="grid"
+    tabindex="0"
+    @keydown="keydown"
+  >
+    <slot />
+  </div>
 </template>

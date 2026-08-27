@@ -60,5 +60,12 @@ onBeforeUnmount(picker.dispose);
 </script>
 
 <template>
-  <div vmojifast-root><slot /></div>
+  <div
+    vmojifast-root
+    data-vmojifast-root
+    :data-vmojifast-loading="picker.context.loading.value || undefined"
+    :data-vmojifast-error="picker.context.error.value ? '' : undefined"
+  >
+    <slot />
+  </div>
 </template>

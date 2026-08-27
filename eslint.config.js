@@ -3,7 +3,7 @@ import vue from "eslint-plugin-vue";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "node_modules", "coverage"] },
+  { ignores: ["dist", "demo/dist", "node_modules", "coverage"] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...vue.configs["flat/essential"],
@@ -12,7 +12,10 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         HTMLElement: "readonly",
+        HTMLButtonElement: "readonly",
         KeyboardEvent: "readonly",
+        navigator: "readonly",
+        window: "readonly",
       },
       parserOptions: {
         parser: tseslint.parser,

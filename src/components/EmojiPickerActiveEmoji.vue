@@ -2,4 +2,6 @@
 import { useEmojiPicker } from "../context";
 const picker = useEmojiPicker();
 </script>
-<template><slot :emoji="picker.activeEmoji" /></template>
+<template>
+  <slot :emoji="picker.activeEmoji.value" />
+</template>

@@ -87,7 +87,31 @@ const customEmojis: CustomEmoji[] = [{ emoji: "<:shipit:123>", label: "Ship it",
 
 Search accepts localized labels, English labels/tags, and Emojibase shortcodes such as `:grinning_face:`. Custom emoji rendering stays headless—use the `EmojiPickerList` `#emoji` slot to render application-specific image or markup.
 
-All components are deliberately unstyled. Target the `vmojifast-*` attributes to style them.
+## Styling state
+
+All components are deliberately unstyled. Every primitive exposes stable `data-vmojifast-*`
+attributes, so styling never requires application-owned hover or selection state.
+
+| Selector                                                                       | Meaning                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[data-vmojifast-root]`                                                        | Picker root; `data-vmojifast-loading` and `data-vmojifast-error` reflect its load state.                                                                                                |
+| `[data-vmojifast-search]`                                                      | Search input; has `data-vmojifast-empty` with no query.                                                                                                                                 |
+| `[data-vmojifast-viewport]`                                                    | Scrollable, keyboard-navigable grid viewport.                                                                                                                                           |
+| `[data-vmojifast-list]`, `[data-vmojifast-category]`, `[data-vmojifast-row]`   | Emoji grid structure.                                                                                                                                                                   |
+| `[data-vmojifast-emoji]`                                                       | Emoji button. `data-vmojifast-active` and `data-vmojifast-highlighted` are set on hover, focus, and keyboard navigation; `data-vmojifast-selected` is set after click, Enter, or Space. |
+| `[data-vmojifast-skin-tone]`                                                   | Skin-tone control; active choice gets `data-vmojifast-active` and `data-vmojifast-selected`.                                                                                            |
+| `[data-vmojifast-loading]`, `[data-vmojifast-error]`, `[data-vmojifast-empty]` | Status primitives from `EmojiPickerList`.                                                                                                                                               |
+
+```css
+[data-vmojifast-emoji][data-vmojifast-highlighted] {
+  background: #f4f4f5;
+  border-radius: 0.5rem;
+}
+
+[data-vmojifast-emoji][data-vmojifast-selected] {
+  outline: 2px solid #7c3aed;
+}
+```
 
 `EmojiPickerRoot` props: `locale`, `columns`, `sticky`, `skin-tone`, `search`, `recent-emojis`, `custom-emojis`, `recent-label`, `custom-label`, `emojibase-url`, and `emoji-version`.
 It emits `emoji-select`, `update:skin-tone`, `update:search`, and `error`. `EmojiPickerList` supplies `loading`, `error`, `empty`, `category`, `row`, and `emoji` slots.
