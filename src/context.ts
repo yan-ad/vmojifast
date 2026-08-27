@@ -18,6 +18,7 @@ import type {
   EmojiPickerData,
   SkinTone,
 } from "./types";
+import type { EmojiDataSource } from "./loader";
 
 export interface EmojiPickerContext {
   columns: ComputedRef<number>;
@@ -45,7 +46,7 @@ export function createEmojiPicker(options: {
   customEmojis: ComputedRef<CustomEmoji[]>;
   recentLabel: ComputedRef<string | undefined>;
   customLabel: ComputedRef<string | undefined>;
-  emojibaseUrl: ComputedRef<string>;
+  emojibaseUrl: ComputedRef<EmojiDataSource>;
   emojiVersion: ComputedRef<number | undefined>;
   onEmojiSelect: (emoji: Emoji) => void;
   onSearchChange: (search: string) => void;

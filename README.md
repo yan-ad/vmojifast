@@ -1,5 +1,9 @@
 # vmojifast
 
+[![npm version](https://img.shields.io/npm/v/vmojifast?logo=npm&label=npm)](https://www.npmjs.com/package/vmojifast)
+[![npm downloads](https://img.shields.io/npm/dw/vmojifast?logo=npm&label=downloads)](https://www.npmjs.com/package/vmojifast)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 An unstyled, composable emoji picker for Vue 3, powered by Emojibase.
 
 ## Install
@@ -85,4 +89,18 @@ All components are deliberately unstyled. Target the `vmojifast-*` attributes to
 `EmojiPickerRoot` props: `locale`, `columns`, `sticky`, `skin-tone`, `search`, `recent-emojis`, `custom-emojis`, `recent-label`, `custom-label`, `emojibase-url`, and `emoji-version`.
 It emits `emoji-select`, `update:skin-tone`, `update:search`, and `error`. `EmojiPickerList` supplies `loading`, `error`, `empty`, `category`, `row`, and `emoji` slots.
 
-Data helpers `findEmoji`, `getEmojiLabel`, `searchEmojis`, `loadEmojiData`, and `clearEmojiDataCache` are exported for custom integrations.
+## Reliable emoji data loading
+
+By default, data is loaded from version-pinned Emojibase mirrors in order: **jsDelivr**, then **unpkg**. If jsDelivr is unavailable, the picker automatically retries unpkg. Host a copy yourself to remove external CDN dependency entirely:
+
+```vue
+<EmojiPickerRoot emojibase-url="/emoji-data/emojibase-data@16.0.0" />
+```
+
+For several internal/CDN mirrors, pass an ordered array; each source must expose `/{locale}/data.json` and `/{locale}/messages.json`:
+
+```vue
+<EmojiPickerRoot :emojibase-url="['https://emoji.example.com', '/emoji-data']" />
+```
+
+Data helpers `findEmoji`, `getEmojiLabel`, `searchEmojis`, `loadEmojiData`, `clearEmojiDataCache`, and `DEFAULT_EMOJIBASE_URLS` are exported for custom integrations.

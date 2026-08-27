@@ -4,6 +4,11 @@ export { default as EmojiPickerViewport } from "./components/EmojiPickerViewport
 export { default as EmojiPickerList } from "./components/EmojiPickerList.vue";
 export { default as EmojiPickerSkinToneSelector } from "./components/EmojiPickerSkinToneSelector.vue";
 export { default as EmojiPickerActiveEmoji } from "./components/EmojiPickerActiveEmoji.vue";
-export { clearEmojiDataCache, loadEmojiData } from "./loader";
+export {
+  clearEmojiDataCache,
+  DEFAULT_EMOJIBASE_URLS,
+  loadEmojiData,
+  type EmojiDataSource,
+} from "./loader";
 export { findEmoji, getEmojiLabel, getEmojiPickerData, searchEmojis } from "./data";
 export type * from "./types";

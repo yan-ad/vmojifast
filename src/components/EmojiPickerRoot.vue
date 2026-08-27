@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, watch } from "vue";
 import { createEmojiPicker } from "../context";
+import { DEFAULT_EMOJIBASE_URLS, type EmojiDataSource } from "../loader";
 import type { CustomEmoji, Emoji, SkinTone } from "../types";
 
 const props = withDefaults(
@@ -14,7 +15,7 @@ const props = withDefaults(
     customEmojis?: CustomEmoji[];
     recentLabel?: string;
     customLabel?: string;
-    emojibaseUrl?: string;
+    emojibaseUrl?: EmojiDataSource;
     emojiVersion?: number;
   }>(),
   {
@@ -24,7 +25,6 @@ const props = withDefaults(
     skinTone: "none",
     recentEmojis: () => [],
     customEmojis: () => [],
-    emojibaseUrl: "https://cdn.jsdelivr.net/npm/emojibase-data",
   },
 );
 const emit = defineEmits<{
@@ -47,7 +47,7 @@ const picker = createEmojiPicker({
   customEmojis: computed(() => props.customEmojis),
   recentLabel: computed(() => props.recentLabel),
   customLabel: computed(() => props.customLabel),
-  emojibaseUrl: computed(() => props.emojibaseUrl),
+  emojibaseUrl: computed(() => props.emojibaseUrl ?? DEFAULT_EMOJIBASE_URLS),
   emojiVersion: computed(() => props.emojiVersion),
   onEmojiSelect: (emoji) => emit("emoji-select", emoji),
   onSearchChange: (value) => emit("update:search", value),

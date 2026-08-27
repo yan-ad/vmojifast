@@ -1,6 +1,14 @@
 import type { EmojiData, SkinTone } from "./types";
 
-const DEFAULT_URL = "https://cdn.jsdelivr.net/npm/emojibase-data";
+/**
+ * Redundant, version-pinned public mirrors. Pass `emojibaseUrl` to use an
+ * internal mirror or a locally hosted copy instead.
+ */
+export const DEFAULT_EMOJIBASE_URLS = [
+  "https://cdn.jsdelivr.net/npm/emojibase-data@16.0.0",
+  "https://unpkg.com/emojibase-data@16.0.0",
+] as const;
+export type EmojiDataSource = string | readonly string[];
 const toneByNumber: Record<number, Exclude<SkinTone, "none">> = {
   1: "light",
   2: "medium-light",
@@ -27,17 +35,20 @@ interface EmojibaseEmoji {
 
 export async function loadEmojiData(
   locale = "en",
-  baseUrl = DEFAULT_URL,
+  source: EmojiDataSource = DEFAULT_EMOJIBASE_URLS,
   signal?: AbortSignal,
 ): Promise<EmojiData> {
-  const root = baseUrl.replace(/\/$/, "");
-  const key = `${root}:${locale}`;
+  const roots = (typeof source === "string" ? [source] : source).map((url) =>
+    url.replace(/\/$/, ""),
+  );
+  if (!roots.length) throw new Error("At least one emoji data source is required.");
+  const key = `${roots.join("|")}:${locale}`;
   if (!signal) {
     const cached = cache.get(key);
     if (cached) return cached;
   }
 
-  const request = (async () => {
+  const loadFromSource = async (root: string) => {
     const [emojiResponse, messagesResponse] = await Promise.all([
       fetch(`${root}/${locale}/data.json`, { signal }),
       fetch(`${root}/${locale}/messages.json`, { signal }),
@@ -95,6 +106,23 @@ export async function loadEmojiData(
       ];
     });
     return { locale, emojis, categories, skinTones };
+  };
+
+  const request = (async () => {
+    const failures: Error[] = [];
+    for (const root of roots) {
+      try {
+        return await loadFromSource(root);
+      } catch (cause) {
+        if ((cause as Error).name === "AbortError") throw cause;
+        failures.push(cause instanceof Error ? cause : new Error(String(cause)));
+      }
+    }
+    const sources = roots.join(", ");
+    const lastFailure = failures[failures.length - 1]?.message;
+    throw new Error(
+      `Unable to load Emojibase data for locale "${locale}" from: ${sources}.${lastFailure ? ` Last error: ${lastFailure}` : ""}`,
+    );
   })();
 
   if (!signal) cache.set(key, request);
