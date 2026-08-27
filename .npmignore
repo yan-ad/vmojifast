@@ -1,0 +1,10 @@
+# The npm `files` allowlist is authoritative; retain these exclusions as an
+# explicit safeguard for clients that inspect or copy the repository.
+demo/
+src/
+tests/
+*.test.*
+coverage/
+.husky/
+.github/
+node_modules/

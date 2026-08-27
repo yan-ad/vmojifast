@@ -1,6 +1,6 @@
 {
   "name": "vmojifast",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A lightweight, unstyled, and composable emoji picker for Vue 3.",
   "license": "MIT",
   "type": "module",
@@ -28,7 +28,9 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "prepare": "husky",
-    "test": "vitest run"
+    "test": "vitest run",
+    "demo": "vite --config demo/vite.config.ts",
+    "demo:build": "vite build --config demo/vite.config.ts"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
