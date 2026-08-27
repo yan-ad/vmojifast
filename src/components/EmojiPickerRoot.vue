@@ -60,5 +60,5 @@ onBeforeUnmount(picker.dispose);
 </script>
 
 <template>
-  <div vmoji-root><slot /></div>
+  <div vmojifast-root><slot /></div>
 </template>

@@ -4,7 +4,7 @@ const picker = useEmojiPicker();
 </script>
 <template>
   <input
-    vmoji-search
+    vmojifast-search
     type="search"
     :value="picker.search.value"
     @input="picker.setSearch(($event.target as HTMLInputElement).value)"

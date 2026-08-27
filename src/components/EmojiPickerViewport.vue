@@ -31,5 +31,5 @@ function keydown(event: KeyboardEvent) {
 }
 </script>
 <template>
-  <div ref="viewport" vmoji-viewport role="grid" tabindex="0" @keydown="keydown"><slot /></div>
+  <div ref="viewport" vmojifast-viewport role="grid" tabindex="0" @keydown="keydown"><slot /></div>
 </template>

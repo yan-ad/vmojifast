@@ -7,20 +7,23 @@ const empty = computed(
 );
 </script>
 <template>
-  <span v-if="picker.loading.value" vmoji-loading><slot name="loading">Loading…</slot></span>
-  <span v-else-if="picker.error.value" vmoji-error>
+  <span v-if="picker.loading.value" vmojifast-loading><slot name="loading">Loading…</slot></span>
+  <span v-else-if="picker.error.value" vmojifast-error>
     <slot name="error" :error="picker.error.value">Unable to load emoji.</slot>
   </span>
-  <span v-else-if="empty" vmoji-empty>
+  <span v-else-if="empty" vmojifast-empty>
     <slot name="empty" :search="picker.search">No emoji found.</slot>
   </span>
-  <div v-else vmoji-list role="rowgroup">
+  <div v-else vmojifast-list role="rowgroup">
     <template
       v-for="(category, categoryIndex) in picker.pickerData.value?.categories"
       :key="category.label"
     >
       <slot name="category" :category="category" :index="categoryIndex">
-        <div vmoji-category :style="picker.sticky ? { position: 'sticky', top: '0' } : undefined">
+        <div
+          vmojifast-category
+          :style="picker.sticky ? { position: 'sticky', top: '0' } : undefined"
+        >
           {{ category.label }}
         </div>
       </slot>
@@ -30,14 +33,14 @@ const empty = computed(
           category.startRowIndex + category.rowsCount,
         )"
         :key="`${categoryIndex}-${row.emojis[0]?.emoji}`"
-        vmoji-row
+        vmojifast-row
         role="row"
       >
         <slot name="row" :row="row" :category="category" :index="categoryIndex">
           <button
             v-for="emoji in row.emojis"
             :key="emoji.emoji"
-            vmoji-emoji
+            vmojifast-emoji
             type="button"
             role="gridcell"
             :aria-label="emoji.label"

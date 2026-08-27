@@ -10,12 +10,12 @@ function select(value: import("../types").SkinTone) {
 }
 </script>
 <template>
-  <div vmoji-skin-tone-selector>
+  <div vmojifast-skin-tone-selector>
     <button
       v-for="(label, tone) in tones"
       :key="tone"
       type="button"
-      vmoji-skin-tone
+      vmojifast-skin-tone
       :aria-label="String(label)"
       :aria-pressed="picker.skinTone.value === tone"
       @click="select(tone as import('../types').SkinTone)"

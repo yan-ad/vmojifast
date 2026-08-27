@@ -1,16 +1,16 @@
-# vmoji
+# vmojifast
 
 An unstyled, composable emoji picker for Vue 3, powered by Emojibase.
 
 ## Install
 
 ```bash
-npm install vmoji
+npm install vmojifast
 ```
 
 ## Usage
 
-Import each component directly from `vmoji`:
+Import each component directly from `vmojifast`:
 
 ```vue
 <script setup lang="ts">
@@ -24,7 +24,7 @@ import {
   EmojiPickerViewport,
   type Emoji,
   type SkinTone,
-} from "vmoji";
+} from "vmojifast";
 
 const skinTone = ref<SkinTone>("none");
 function insertEmoji({ emoji }: Emoji) {
@@ -59,7 +59,7 @@ import {
   EmojiPickerSearch,
   EmojiPickerViewport,
   type CustomEmoji,
-} from "vmoji";
+} from "vmojifast";
 
 const search = ref("");
 const recentEmojis = ref<CustomEmoji[]>([{ emoji: "🎉", label: "party popper" }]);
@@ -80,7 +80,7 @@ const customEmojis: CustomEmoji[] = [{ emoji: "<:shipit:123>", label: "Ship it",
 
 Search accepts localized labels, English labels/tags, and Emojibase shortcodes such as `:grinning_face:`. Custom emoji rendering stays headless—use the `EmojiPickerList` `#emoji` slot to render application-specific image or markup.
 
-All components are deliberately unstyled. Target the `vmoji-*` attributes to style them.
+All components are deliberately unstyled. Target the `vmojifast-*` attributes to style them.
 
 `EmojiPickerRoot` props: `locale`, `columns`, `sticky`, `skin-tone`, `search`, `recent-emojis`, `custom-emojis`, `recent-label`, `custom-label`, `emojibase-url`, and `emoji-version`.
 It emits `emoji-select`, `update:skin-tone`, `update:search`, and `error`. `EmojiPickerList` supplies `loading`, `error`, `empty`, `category`, `row`, and `emoji` slots.
