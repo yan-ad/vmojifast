@@ -3,6 +3,14 @@
   "version": "0.0.2",
   "description": "A lightweight, unstyled, and composable emoji picker for Vue 3.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yan-ad/vmojifast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yan-ad/vmojifast/issues"
+  },
+  "homepage": "https://github.com/yan-ad/vmojifast#readme",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",

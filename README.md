@@ -2,9 +2,12 @@
 
 [![npm version](https://img.shields.io/npm/v/vmojifast?logo=npm&label=npm)](https://www.npmjs.com/package/vmojifast)
 [![npm downloads](https://img.shields.io/npm/dw/vmojifast?logo=npm&label=downloads)](https://www.npmjs.com/package/vmojifast)
+[![GitHub repository](https://img.shields.io/badge/GitHub-yan--ad%2Fvmoji-181717?logo=github)](https://github.com/yan-ad/vmoji)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An unstyled, composable emoji picker for Vue 3, powered by Emojibase.
+
+**Repository:** [github.com/yan-ad/vmoji](https://github.com/yan-ad/vmoji)
 
 ## Install
 
