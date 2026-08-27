@@ -1,6 +1,6 @@
 {
   "name": "vmojifast",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A lightweight, unstyled, and composable emoji picker for Vue 3.",
   "license": "MIT",
   "repository": {
