@@ -1,15 +1,23 @@
-export type Locale = string;
 export type SkinTone = "none" | "light" | "medium-light" | "medium" | "medium-dark" | "dark";
 
 export interface Emoji {
   emoji: string;
   label: string;
+  /** An Emojibase shortcode such as `:grinning_face:` when available. */
+  shortcode?: string;
+}
+
+/** A user-provided emoji, suitable for recent and custom categories. */
+export interface CustomEmoji extends Emoji {
+  id?: string;
 }
 
 export interface EmojiDataEmoji extends Emoji {
   category: number;
   version: number;
   tags: string[];
+  /** All Emojibase shortcodes, normalized with surrounding colons. */
+  shortcodes: string[];
   countryFlag?: true;
   skins?: Partial<Record<Exclude<SkinTone, "none">, string>>;
 }
@@ -20,7 +28,7 @@ export interface EmojiDataCategory {
 }
 
 export interface EmojiData {
-  locale: Locale;
+  locale: string;
   emojis: EmojiDataEmoji[];
   categories: EmojiDataCategory[];
   skinTones: Record<Exclude<SkinTone, "none">, string>;

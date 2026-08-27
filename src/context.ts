@@ -1,7 +1,23 @@
-import { computed, inject, provide, ref, type ComputedRef, type InjectionKey, type Ref } from "vue";
+import {
+  computed,
+  inject,
+  provide,
+  ref,
+  watch,
+  type ComputedRef,
+  type InjectionKey,
+  type Ref,
+} from "vue";
 import { getEmojiPickerData } from "./data";
 import { loadEmojiData } from "./loader";
-import type { Emoji, EmojiData, EmojiPickerData, SkinTone } from "./types";
+import type {
+  CustomEmoji,
+  Emoji,
+  EmojiData,
+  EmojiDataEmoji,
+  EmojiPickerData,
+  SkinTone,
+} from "./types";
 
 export interface EmojiPickerContext {
   columns: ComputedRef<number>;
@@ -14,6 +30,7 @@ export interface EmojiPickerContext {
   pickerData: ComputedRef<EmojiPickerData | undefined>;
   activeEmoji: Ref<Emoji | undefined>;
   select: (emoji: Emoji) => void;
+  setSearch: (search: string) => void;
 }
 
 export const emojiPickerKey: InjectionKey<EmojiPickerContext> = Symbol("EmojiPicker");
@@ -23,21 +40,47 @@ export function createEmojiPicker(options: {
   columns: ComputedRef<number>;
   sticky: ComputedRef<boolean>;
   skinTone: Ref<SkinTone>;
+  searchValue: ComputedRef<string | undefined>;
+  recentEmojis: ComputedRef<CustomEmoji[]>;
+  customEmojis: ComputedRef<CustomEmoji[]>;
+  recentLabel: ComputedRef<string | undefined>;
+  customLabel: ComputedRef<string | undefined>;
   emojibaseUrl: ComputedRef<string>;
   emojiVersion: ComputedRef<number | undefined>;
   onEmojiSelect: (emoji: Emoji) => void;
+  onSearchChange: (search: string) => void;
 }) {
-  const search = ref("");
+  const search = ref(options.searchValue.value ?? "");
   const loading = ref(true);
   const error = ref<Error>();
   const data = ref<EmojiData>();
+  const englishData = ref<EmojiData>();
   const activeEmoji = ref<Emoji>();
+  watch(options.searchValue, (value) => {
+    if (value !== undefined) search.value = value;
+  });
   const pickerData = computed(() => {
     if (!data.value) return undefined;
     const filtered = options.emojiVersion.value
-      ? { ...data.value, emojis: data.value.emojis.filter((emoji) => emoji.version <= options.emojiVersion.value!) }
+      ? {
+          ...data.value,
+          emojis: data.value.emojis.filter((emoji) => emoji.version <= options.emojiVersion.value!),
+        }
       : data.value;
-    return getEmojiPickerData(filtered, options.columns.value, options.skinTone.value, search.value);
+    const englishEmojis: EmojiDataEmoji[] = englishData.value?.emojis ?? [];
+    return getEmojiPickerData(
+      filtered,
+      options.columns.value,
+      options.skinTone.value,
+      search.value,
+      {
+        englishEmojis,
+        recentEmojis: options.recentEmojis.value,
+        customEmojis: options.customEmojis.value,
+        recentLabel: options.recentLabel.value,
+        customLabel: options.customLabel.value,
+      },
+    );
   });
   let controller: AbortController | undefined;
 
@@ -47,21 +90,45 @@ export function createEmojiPicker(options: {
     loading.value = true;
     error.value = undefined;
     try {
-      data.value = await loadEmojiData(options.locale.value, options.emojibaseUrl.value, controller.signal);
+      const locale = options.locale.value;
+      const [localized, english] = await Promise.all([
+        loadEmojiData(locale, options.emojibaseUrl.value, controller.signal),
+        locale === "en"
+          ? Promise.resolve(undefined)
+          : loadEmojiData("en", options.emojibaseUrl.value, controller.signal),
+      ]);
+      data.value = localized;
+      englishData.value = english;
     } catch (cause) {
-      if ((cause as Error).name !== "AbortError") error.value = cause instanceof Error ? cause : new Error(String(cause));
+      if ((cause as Error).name !== "AbortError")
+        error.value = cause instanceof Error ? cause : new Error(String(cause));
     } finally {
       if (!controller.signal.aborted) loading.value = false;
     }
   };
 
-  const context: EmojiPickerContext = { ...options, search, loading, error, data, pickerData, activeEmoji, select: options.onEmojiSelect };
+  const setSearch = (value: string) => {
+    if (options.searchValue.value === undefined) search.value = value;
+    options.onSearchChange(value);
+  };
+  const context: EmojiPickerContext = {
+    ...options,
+    search,
+    loading,
+    error,
+    data,
+    pickerData,
+    activeEmoji,
+    select: options.onEmojiSelect,
+    setSearch,
+  };
   provide(emojiPickerKey, context);
-  return { context, reload, dispose: () => controller?.abort() };
+  return { context, reload, setSearch, dispose: () => controller?.abort() };
 }
 
 export function useEmojiPicker() {
   const context = inject(emojiPickerKey);
-  if (!context) throw new Error("Emoji picker components must be rendered inside <EmojiPickerRoot>.");
+  if (!context)
+    throw new Error("Emoji picker components must be rendered inside <EmojiPickerRoot>.");
   return context;
 }
